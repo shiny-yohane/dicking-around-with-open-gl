@@ -2,21 +2,34 @@
 #include <GLUT/glut.h>
 #include <cstdio>
 
-int main(int argc, char **argv)
+static void Render()
 {
-    glutInit(&argc, argv);
-    glutCreateWindow("GLEW Test");
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        // Problem: glewInit failed, something is seriously wrong.
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-        // Handle the error appropriately.
-        // ...
-    }
-    fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutSwapBuffers();
+}
 
-    // Further code goes here...
+int main(int argc, char **argv) // why ** ?
+{
+    glutInit(&argc, argv); // yeah why & here?
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+
+    int width = 800;
+    int height = 600;
+    glutInitWindowSize(width, height);
+
+    int x = 200;
+    int y = 200;
+    glutInitWindowPosition(x, y);
+
+    int win = glutCreateWindow("GLEW Test");
+    printf("window id: %d\n", win);
+
+    GLclampf Red = 1.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f; // GLclampf?
+    glClearColor(Red, Green, Blue, Alpha);
+
+    glutDisplayFunc(Render);
+
+    glutMainLoop();
 
     return 0;
 }
