@@ -5,6 +5,7 @@
 static void Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+    glutPostRedisplay(); // what is this?
     glutSwapBuffers();
 }
 
