@@ -1,1 +1,1 @@
-clang++ main.cpp -o glew_test
+clang++ main.cpp -o gl_test -lGLEW -framework OpenGL -framework GLUT

@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 #include <cstdio>
 
 int main(int argc, char **argv)
