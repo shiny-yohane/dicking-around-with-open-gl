@@ -21,16 +21,16 @@ void closeCallback()
     std::exit(0);
 }
 
-static void Render()
+void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glutPostRedisplay(); // what is this?
+    glutPostRedisplay();
     glutSwapBuffers();
 }
 
-int main(int argc, char **argv) // why ** ?
+int main(int argc, char **argv)
 {
-    glutInit(&argc, argv); // yeah why & here?
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
     int width = 800;
@@ -46,11 +46,11 @@ int main(int argc, char **argv) // why ** ?
 
     glutWMCloseFunc(closeCallback);
 
-    GLclampf Red = 1.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f; // GLclampf?
-    glClearColor(Red, Green, Blue, Alpha);
+    GLfloat red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
+    glClearColor(red, green, blue, alpha);
 
     display();
-    glutDisplayFunc(Render);
+    glutDisplayFunc(render);
 
     glutMainLoop();
 
