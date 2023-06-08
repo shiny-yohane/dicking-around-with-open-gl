@@ -3,6 +3,12 @@
 #include <cstdio>
 #include <cstdlib>
 
+void display()
+{
+    const GLubyte *version = glGetString(GL_VERSION);
+    printf("OpenGL Version: %s\n", version);
+}
+
 void closeCallback()
 {
     // Perform any necessary cleanup or application-specific actions
@@ -43,6 +49,7 @@ int main(int argc, char **argv) // why ** ?
     GLclampf Red = 1.0f, Green = 0.0f, Blue = 0.0f, Alpha = 0.0f; // GLclampf?
     glClearColor(Red, Green, Blue, Alpha);
 
+    display();
     glutDisplayFunc(Render);
 
     glutMainLoop();
