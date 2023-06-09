@@ -33,7 +33,7 @@ void render()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glEnableVertexAttribArray(0); // which is different from glEnableVertexArrayAttrib
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_ARRAY_BUFFER, 0, 1);
+    glDrawArrays(GL_POINTS, 0, 1);
     glDisableVertexAttribArray(0);
 
     glutPostRedisplay();
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-    int width = 800;
+    int width = 600;
     int height = 600;
     glutInitWindowSize(width, height);
 
