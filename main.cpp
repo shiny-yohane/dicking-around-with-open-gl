@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 
     GLfloat red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
     glClearColor(red, green, blue, alpha);
+    glPointSize(8.0f);
 
     createVertexBuffer();
 
