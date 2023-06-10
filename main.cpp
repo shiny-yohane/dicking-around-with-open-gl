@@ -34,14 +34,25 @@ void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    GLfloat vertices[] = {-1.0f, -1.0f, 0.0f,
+                          1.0f, -1.0f, 0.0f,
+                          0.0f, 1.0f, 0.0f};
+
+    GLfloat colors[] = {1.0f, 0.0f, 0.0f,  // Red color for vertex 1
+                        0.0f, 1.0f, 0.0f,  // Green color for vertex 2
+                        0.0f, 0.0f, 1.0f}; // Blue color for vertex 3
+
     glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexPointer(3, GL_FLOAT, 0, 0);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(3, GL_FLOAT, 0, colors);
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
 
-    glutPostRedisplay();
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
     glutSwapBuffers();
 }
 
@@ -50,12 +61,12 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-    int width = 600;
-    int height = 600;
+    int width = 800;
+    int height = 800;
     glutInitWindowSize(width, height);
 
-    int x = 200;
-    int y = 200;
+    int x = 400;
+    int y = 400;
     glutInitWindowPosition(x, y);
 
     int win = glutCreateWindow("GLEW Test");
@@ -70,11 +81,10 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    GLfloat red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
-    glClearColor(red, green, blue, alpha);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glPointSize(8.0f);
 
-    createVertexBuffer();
+    // createVertexBuffer();
 
     display();
     glutDisplayFunc(render);
