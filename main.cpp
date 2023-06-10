@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #include <cstdio>
 #include <cstdlib>
@@ -93,7 +94,7 @@ void compileShaders()
     {
         std::exit(1);
     }
-    addShader(shaderProgram, vs.c_str(), GL_FRAGMENT_SHADER);
+    addShader(shaderProgram, fs.c_str(), GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = {0};
@@ -108,49 +109,20 @@ void compileShaders()
         exit(1);
     }
 
-    glValidateProgram(shaderProgram);
-    glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
-    if (!Success)
-    {
-        glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
-        fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
-        exit(1);
-    }
+    // glValidateProgram(shaderProgram);
+    // glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
+    // if (!Success)
+    // {
+    //     glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+    //     fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
+    //     exit(1);
+    // }
 
     glUseProgram(shaderProgram);
 }
 
 void render()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
-
-    GLfloat vertices[] = {-1.0f, -1.0f, 0.0f,
-                          0.0f, 1.0f, 0.0f,
-                          1.0f, -1.0f, 0.0f};
-
-    GLfloat *p = vertices;
-
-    // GLfloat vertices[] = {-1.0f, -1.0f, 0.0f,
-    //                       1.0f, -1.0f, 0.0f,
-    //                       0.0f, 1.0f, 0.0f};
-
-    GLfloat colors[] = {1.0f, 0.0f, 0.0f,  // Red color for vertex 1
-                        0.0f, 1.0f, 0.0f,  // Green color for vertex 2
-                        0.0f, 0.0f, 1.0f}; // Blue color for vertex 3
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(3, GL_FLOAT, 0, colors);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void error_callback(int error, const char *description)
@@ -172,7 +144,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 int main(int argc, char **argv)
 {
-
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit())
@@ -180,8 +151,10 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow *window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
     if (!window)
@@ -194,20 +167,27 @@ int main(int argc, char **argv)
 
     glfwMakeContextCurrent(window);
 
+    displayVersion();
+
+    createVertexBuffer();
+    compileShaders();
+
     while (!glfwWindowShouldClose(window))
     {
         // Keep running
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Render a triangle
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.0f, 0.0f, 0.0f); // Red
-        glVertex2f(-0.6f, -0.4f);
-        glColor3f(0.0f, 1.0f, 0.0f); // Green
-        glVertex2f(0.6f, -0.4f);
-        glColor3f(0.0f, 0.0f, 1.0f); // Blue
-        glVertex2f(0.0f, 0.6f);
-        glEnd();
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glDisableVertexAttribArray(0);
+
+        // render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
