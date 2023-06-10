@@ -90,12 +90,42 @@ void compileShaders()
     }
 
     std::string vs, fs;
+
     if (!readFile("shader.vert", vs))
     {
         std::exit(1);
     }
-
     addShader(shaderProgram, vs.c_str(), GL_VERTEX_SHADER);
+
+    if (!readFile("shader.frag", fs))
+    {
+        std::exit(1);
+    }
+    addShader(shaderProgram, vs.c_str(), GL_FRAGMENT_SHADER);
+
+    GLint Success = 0;
+    GLchar ErrorLog[1024] = {0};
+
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Success);
+    if (Success == 0)
+    {
+        glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
+        exit(1);
+    }
+
+    glValidateProgram(shaderProgram);
+    glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
+    if (!Success)
+    {
+        glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+        fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
+        exit(1);
+    }
+
+    glUseProgram(shaderProgram);
 }
 
 void render()
