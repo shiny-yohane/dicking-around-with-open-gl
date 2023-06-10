@@ -9,6 +9,7 @@
 
 GLuint VBO;
 GLuint VAO;
+GLuint gScaleLocation;
 
 void displayVersion()
 {
@@ -121,6 +122,14 @@ void compileShaders()
         exit(1);
     }
 
+    gScaleLocation = glGetUniformLocation(shaderProgram, "gScale");
+    if (gScaleLocation == -1)
+    {
+        fprintf(stderr, "Error getting uniform location of 'gScale'\n");
+    std:
+        exit(1);
+    }
+
     // glValidateProgram(shaderProgram);
     // glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
     // if (!Success)
@@ -133,8 +142,29 @@ void compileShaders()
     glUseProgram(shaderProgram);
 }
 
-void render()
+void render(GLFWwindow *window)
 {
+    static float scale = 0.0f;
+    static float delta = 0.005f;
+
+    scale += delta;
+    if ((scale >= 1.0f) || (scale <= -1.0f))
+    {
+        delta *= -1.0f;
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindVertexArray(VAO);
+
+    glUniform1f(gScaleLocation, scale);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glBindVertexArray(0);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 
 void error_callback(int error, const char *description)
@@ -193,16 +223,7 @@ int main(int argc, char **argv)
 
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glBindVertexArray(VAO);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glBindVertexArray(0);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        render(window);
     }
 
     return 0;
