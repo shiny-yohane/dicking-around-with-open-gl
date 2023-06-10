@@ -3,6 +3,9 @@
 #include <GLUT/glut.h>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 GLuint VBO;
 
@@ -18,6 +21,21 @@ void closeCallback()
     std::exit(0);
 }
 
+bool readFile(const char *fileName, std::string &outFile)
+{
+    std::ifstream file(fileName);
+    if (!file)
+    {
+        return false;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    outFile = buffer.str();
+
+    return true;
+}
+
 void createVertexBuffer()
 {
     GLfloat vertices[] = {-1.0f, -1.0f, 0.0f,
@@ -30,14 +48,54 @@ void createVertexBuffer()
     printf("sizeof(vertices): %lu\n", sizeof(vertices));
 }
 
+void addShader(GLuint shaderProgram, const char *pShaderText, GLenum shaderType)
+{
+    GLuint shaderObj = glCreateShader(shaderType);
+    if (shaderObj == 0)
+    {
+        fprintf(stderr, "Error creating shader type %d\n", shaderType);
+        std::exit(1);
+    }
+
+    const GLchar *p[1];
+    p[0] = pShaderText;
+
+    GLint lengths[1];
+    lengths[0] = strlen(pShaderText);
+
+    glShaderSource(shaderObj, 1, p, lengths);
+    glCompileShader(shaderObj);
+
+    GLint success;
+    glGetShaderiv(shaderObj, GL_COMPILE_STATUS, &success);
+
+    if (!success)
+    {
+        GLchar infoLog[1024];
+        glGetShaderInfoLog(shaderObj, 1024, NULL, infoLog);
+        fprintf(stderr, "Error compiling shader type %d: '%s'\n", shaderType, infoLog);
+        std::exit(1);
+    }
+
+    glAttachShader(shaderProgram, shaderObj);
+}
+
 void compileShaders()
 {
     GLuint shaderProgram = glCreateProgram();
     if (shaderProgram == 0)
     {
         fprintf(stderr, "Error creating shader program\n");
-        std::exit(0);
+        std::exit(1);
     }
+
+    std::string vs, fs;
+    if (!readFile("shader.vert", vs))
+    {
+        std::exit(1);
+    }
+
+    addShader(shaderProgram, vs.c_str(), GL_VERTEX_SHADER);
 }
 
 void render()
