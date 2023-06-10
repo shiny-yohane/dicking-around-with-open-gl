@@ -20,21 +20,26 @@ void closeCallback()
 
 void createVertexBuffer()
 {
-    GLfloat vertices[] = {0.0f, 0.0f, 0.0f};
+    GLfloat vertices[] = {-1.0f, -1.0f, 0.0f,
+                          1.0f, -1.0f, 0.0f,
+                          0.0f, 1.0f, 0.0f};
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    printf("sizeof(vertices): %lu\n", sizeof(vertices));
 }
 
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glEnableVertexAttribArray(0); // which is different from glEnableVertexArrayAttrib
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_POINTS, 0, 1);
-    glDisableVertexAttribArray(0);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     glutPostRedisplay();
     glutSwapBuffers();
