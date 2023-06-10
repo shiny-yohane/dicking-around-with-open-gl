@@ -14,8 +14,7 @@
                 "-lGLEW",
                 "-framework",
                 "OpenGL",
-                "-framework",
-                "GLUT"
+                "-lglfw",
             ],
             "options": {
                 "cwd": "${fileDirname}"

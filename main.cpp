@@ -1,6 +1,4 @@
-#define GL_SILENCE_DEPRECATION
-#include <GL/glew.h>
-#include <GLUT/glut.h>
+#include <GLFW/glfw3.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -13,12 +11,6 @@ void displayVersion()
 {
     const GLubyte *version = glGetString(GL_VERSION);
     printf("OpenGL Version: %s\n", version);
-}
-
-void closeCallback()
-{
-    glutDestroyWindow(glutGetWindow());
-    std::exit(0);
 }
 
 bool readFile(const char *fileName, std::string &outFile)
@@ -159,45 +151,67 @@ void render()
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+}
 
-    glutSwapBuffers();
+void error_callback(int error, const char *description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+    {
+        printf("You pressed the key 'Q'\n");
+    }
 }
 
 int main(int argc, char **argv)
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-    int width = 800;
-    int height = 800;
-    glutInitWindowSize(width, height);
+    glfwSetErrorCallback(error_callback);
 
-    int x = 400;
-    int y = 400;
-    glutInitWindowPosition(x, y);
-
-    int win = glutCreateWindow("GLEW Test");
-    printf("window id: %d\n", win);
-
-    glutWMCloseFunc(closeCallback);
-
-    GLenum res = glewInit();
-    if (res != GLEW_OK)
+    if (!glfwInit())
     {
-        fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-        return 1;
+        exit(EXIT_FAILURE);
     }
 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glPointSize(8.0f);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-    // createVertexBuffer();
-    compileShaders();
+    GLFWwindow *window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
 
-    displayVersion();
-    glutDisplayFunc(render);
+    glfwSetKeyCallback(window, key_callback);
 
-    glutMainLoop();
+    glfwMakeContextCurrent(window);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        // Keep running
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Render a triangle
+        glBegin(GL_TRIANGLES);
+        glColor3f(1.0f, 0.0f, 0.0f); // Red
+        glVertex2f(-0.6f, -0.4f);
+        glColor3f(0.0f, 1.0f, 0.0f); // Green
+        glVertex2f(0.6f, -0.4f);
+        glColor3f(0.0f, 0.0f, 1.0f); // Blue
+        glVertex2f(0.0f, 0.6f);
+        glEnd();
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
     return 0;
 }
