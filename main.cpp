@@ -6,7 +6,7 @@
 
 GLuint VBO;
 
-void display()
+void displayVersion()
 {
     const GLubyte *version = glGetString(GL_VERSION);
     printf("OpenGL Version: %s\n", version);
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
     // createVertexBuffer();
 
-    display();
+    displayVersion();
     glutDisplayFunc(render);
 
     glutMainLoop();
