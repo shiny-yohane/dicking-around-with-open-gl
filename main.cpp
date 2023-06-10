@@ -30,6 +30,16 @@ void createVertexBuffer()
     printf("sizeof(vertices): %lu\n", sizeof(vertices));
 }
 
+void compileShaders()
+{
+    GLuint shaderProgram = glCreateProgram();
+    if (shaderProgram == 0)
+    {
+        fprintf(stderr, "Error creating shader program\n");
+        std::exit(0);
+    }
+}
+
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -94,6 +104,7 @@ int main(int argc, char **argv)
     glPointSize(8.0f);
 
     // createVertexBuffer();
+    compileShaders();
 
     displayVersion();
     glutDisplayFunc(render);
