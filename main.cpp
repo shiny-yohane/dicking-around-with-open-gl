@@ -7,9 +7,13 @@
 #include <fstream>
 #include <sstream>
 
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+
 GLuint VBO;
 GLuint VAO;
-GLuint gScaleLocation;
+GLuint gTranslationLocation;
 
 void displayVersion()
 {
@@ -122,10 +126,10 @@ void compileShaders()
         exit(1);
     }
 
-    gScaleLocation = glGetUniformLocation(shaderProgram, "gScale");
-    if (gScaleLocation == -1)
+    gTranslationLocation = glGetUniformLocation(shaderProgram, "gTranslation");
+    if (gTranslationLocation == -1)
     {
-        fprintf(stderr, "Error getting uniform location of 'gScale'\n");
+        fprintf(stderr, "Error getting uniform location of 'gTranslation'\n");
     std:
         exit(1);
     }
@@ -153,11 +157,16 @@ void render(GLFWwindow *window)
         delta *= -1.0f;
     }
 
+    glm::mat4 translation(1.0f, 0.0f, 0.0f, scale * 2,
+                          0.0f, 1.0f, 0.0f, scale,
+                          0.0f, 0.0f, 1.0f, 0.0f,
+                          0.0f, 0.0f, 0.0f, 1.0f);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO);
 
-    glUniform1f(gScaleLocation, scale);
+    glUniformMatrix4fv(gTranslationLocation, 1, GL_TRUE, &translation[0][0]);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
