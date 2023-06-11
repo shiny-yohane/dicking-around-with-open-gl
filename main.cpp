@@ -13,7 +13,7 @@
 
 GLuint VBO;
 GLuint VAO;
-GLuint gTranslationLocation;
+GLuint gRotationLocation;
 
 void displayVersion()
 {
@@ -126,10 +126,10 @@ void compileShaders()
         exit(1);
     }
 
-    gTranslationLocation = glGetUniformLocation(shaderProgram, "gTranslation");
-    if (gTranslationLocation == -1)
+    gRotationLocation = glGetUniformLocation(shaderProgram, "gRotation");
+    if (gRotationLocation == -1)
     {
-        fprintf(stderr, "Error getting uniform location of 'gTranslation'\n");
+        fprintf(stderr, "Error getting uniform location of 'gRotation'\n");
     std:
         exit(1);
     }
@@ -148,25 +148,25 @@ void compileShaders()
 
 void render(GLFWwindow *window)
 {
-    static float scale = 0.0f;
-    static float delta = 0.005f;
+    static float AngleInRadians = 0.0f;
+    static float Delta = 0.01f;
 
-    scale += delta;
-    if ((scale >= 1.0f) || (scale <= -1.0f))
+    AngleInRadians += Delta;
+    if ((AngleInRadians >= 1.5708f) || (AngleInRadians <= -1.5708f))
     {
-        delta *= -1.0f;
+        Delta *= -1.0f;
     }
 
-    glm::mat4 translation(1.0f, 0.0f, 0.0f, scale * 2,
-                          0.0f, 1.0f, 0.0f, scale,
-                          0.0f, 0.0f, 1.0f, 0.0f,
-                          0.0f, 0.0f, 0.0f, 1.0f);
+    glm::mat4 rotation(cosf(AngleInRadians), -sinf(AngleInRadians), 0.0f, 0.0f,
+                       sinf(AngleInRadians), cosf(AngleInRadians), 0.0f, 0.0f,
+                       0.0, 0.0f, 1.0f, 0.0f,
+                       0.0f, 0.0f, 0.0f, 1.0f);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO);
 
-    glUniformMatrix4fv(gTranslationLocation, 1, GL_TRUE, &translation[0][0]);
+    glUniformMatrix4fv(gRotationLocation, 1, GL_TRUE, &rotation[0][0]);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(640, 640, "My Title", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
